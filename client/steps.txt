@@ -1,0 +1,9 @@
+npx create-react-app login-register-app
+
+npm install @mui/material @emotion/react @emotion/styled
+
+npm install react-router-dom
+
+npm install formik --save
+
+npm install yup --save

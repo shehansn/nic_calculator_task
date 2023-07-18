@@ -4,9 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Box, Card, CardContent, Container, Grid, InputLabel, TextField, Toolbar, Typography } from '@mui/material';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { getAllUsers } from '../api';
+import { convertNIC, getAllUsers } from '../api';
+import axios from 'axios';
+
 
 const Home = () => {
+
     const navigate = useNavigate()
 
     const fetchUser = () => {
@@ -36,8 +39,48 @@ const Home = () => {
     });
 
     async function convert(values) {
-        console.log(values)
-        //navigate('/');
+        try {
+            //send access tioken in axios header
+            axios.interceptors.request.use(
+                (config) => {
+                    if (userInfo.token) {
+                        config.headers.authorization = `Bearer ${userInfo.token}`;
+                        console.log('token from userinfo home', userInfo.token)
+                    }
+                    return config;
+                },
+                (error) => {
+                    return Promise.reject(error);
+                }
+            );
+            //call convertNIC function in api file
+            console.log(values);
+            const res = await convertNIC(values);
+            console.log("response from convert nic 1", res);
+            if (res.code === 'ERR_BAD_REQUEST') {
+                console.log("response from convert nic", res.response.data.message);
+                alert(res.response.data.message);
+                return;
+            }
+            else {
+                alert(`converted  ${res.Dob} ${res.age} ${res.gender}`);
+                setDateOfBirth(res.Dob)
+                setGender(res.gender)
+                console.log("response from convert nic", res);
+                setUserDetails({
+                    nic: ""
+                });
+            }
+
+        } catch (error) {
+            console.error("Error during login:", error);
+        }
+
+    }
+
+    const logout = () => {
+        localStorage.clear();
+        navigate('/login');
     }
 
     // getAllUsers().then((data) => {
@@ -51,7 +94,9 @@ const Home = () => {
             <div>
                 <React.Fragment>
                     <Toolbar sx={{ borderBottom: 1, borderColor: 'divider', mb: 5 }}>
-
+                        <Button variant="none" size="small" >
+                            Welcome {userInfo?.user.name}
+                        </Button>
                         <Typography
                             component="h2"
                             variant="h5"
@@ -60,13 +105,21 @@ const Home = () => {
                             noWrap
                             sx={{ flex: 1 }}
                         >
-                            NIC Calculator
+                            NIC Converter
                         </Typography>
-                        <Link to={"/login"} >
-                            <Button variant="outlined" size="small">
-                                Login
+                        {userInfo && (
+                            <Button variant="outlined" size="small" onClick={() => { logout() }}>
+                                LogOut
                             </Button>
-                        </Link>
+                        )}
+                        {!userInfo && (
+                            <Link to={"/login"} >
+                                <Button variant="outlined" size="small">
+                                    Login
+                                </Button>
+                            </Link>
+                        )}
+
                     </Toolbar>
 
                     <Box

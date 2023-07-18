@@ -91,7 +91,7 @@ const LoginForm = () => {
                                             </Typography>
                                         </Box>
                                         <Grid container spacing={2}>
-                                            <Grid item xs={12} md={12} spacing={0}                                   >
+                                            <Grid item xs={12} md={12}                                 >
 
                                                 <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
                                                     <Typography

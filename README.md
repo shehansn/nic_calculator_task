@@ -1,50 +1,61 @@
-# nic_calculator_task
+## nic_calculator_task
 
 This Repository includes Nic calculator task
 
-# Find Birthday, Gender from NIC number
+## Find Birthday, Gender from NIC number
 
 This Web application is created fro finding Date Of Birth and Gender of Sri lanka citizen using their NIC card No.
 This supports the all new and old NIC card Numbers.
 
 ![image](Nic_Converter_Ui.png)
 
-# Technologies used-Frontend
+## Technologies used-Frontend
 
 React js
+
 Formik & Yup for form validation
+
 Axios
 
-# Technologies used Backend
+## Technologies used Backend
 
 Nodejs
+
 ExpressJs
+
 JsonWebToken -Jwt
 
-# How To Run
+## How To Run
 
-# Frontend
+## Frontend
 
-```cd client
+```
+cd client
 npm install
+
 npm start
 ```
 
-# Backend
+## Backend
 
-```cd server
+```
+cd server
 npm install
 ```
 
 add `.env file`
 
-```CONNECTION_STRING =
+```
+CONNECTION_STRING =
+
 SECRET=
 ```
 
-```npm start````
+```
+npm start
+```
 
-# Specifications
+## Specifications
 
 Backend is protected from unautherized access and protected from access using invalid token
 

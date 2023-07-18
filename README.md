@@ -1,6 +1,6 @@
 ## nic_calculator_task
 
-This Repository includes Nic calculator task
+This Repository includes Nic calculator task.
 
 ## Find Birthday, Gender from NIC number
 
@@ -32,7 +32,6 @@ JsonWebToken -Jwt
 ```
 cd client
 npm install
-
 npm start
 ```
 
@@ -43,11 +42,10 @@ cd server
 npm install
 ```
 
-add `.env file`
+add `.env file` to root directory
 
 ```
 CONNECTION_STRING =
-
 SECRET=
 ```
 
@@ -57,10 +55,10 @@ npm start
 
 ## Specifications
 
-Backend is protected from unautherized access and protected from access using invalid token
+Backend is protected from unautherized access and protected from access using invalid token.
 
-Frontend route is protected. Without login cant access nic converter page
+Frontend route is protected. Without login cant access nic converter page.
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/) Fell free to use, share and modify
+[MIT](https://choosealicense.com/licenses/mit/) Fell free to use, share and modify.

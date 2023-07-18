@@ -56,9 +56,8 @@ npm start
 ## Specifications
 
 Backend is protected from unautherized access and protected from access using invalid token.
-
 Frontend route is protected. Without login cant access nic converter page.
 
-## License
 
+## License
 [MIT](https://choosealicense.com/licenses/mit/) Fell free to use, share and modify.

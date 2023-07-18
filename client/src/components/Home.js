@@ -25,10 +25,8 @@ const Home = () => {
     }, []);
 
     const [userInfo, setUserInfo] = useState('');
-
     const [dateOfBirth, setDateOfBirth] = useState('');
     const [gender, setGender] = useState('');
-
     const [userDetails, setUserDetails] = useState({
         nic: "",
 
@@ -40,7 +38,7 @@ const Home = () => {
 
     async function convert(values) {
         try {
-            //send access tioken in axios header
+            //send access token in axios header
             axios.interceptors.request.use(
                 (config) => {
                     if (userInfo.token) {
@@ -53,23 +51,24 @@ const Home = () => {
                     return Promise.reject(error);
                 }
             );
+
             //call convertNIC function in api file
             console.log(values);
             const res = await convertNIC(values);
             console.log("response from convert nic 1", res);
             if (res.code === 'ERR_BAD_REQUEST') {
                 console.log("response from convert nic", res.response.data.message);
+                setDateOfBirth('')
+                setGender('')
                 alert(res.response.data.message);
                 return;
             }
             else {
-                alert(`converted  ${res.Dob} ${res.age} ${res.gender}`);
+                alert(`converted DOB: ${res.Dob} Gender: ${res.gender}`);
                 setDateOfBirth(res.Dob)
                 setGender(res.gender)
                 console.log("response from convert nic", res);
-                setUserDetails({
-                    nic: ""
-                });
+                setUserDetails({ nic: "" });
             }
 
         } catch (error) {
@@ -82,10 +81,6 @@ const Home = () => {
         localStorage.clear();
         navigate('/login');
     }
-
-    // getAllUsers().then((data) => {
-    //     console.log("users data from home", data)
-    // });
 
     if (!userInfo) {
         navigate('/login');
@@ -170,7 +165,7 @@ const Home = () => {
                                                         </Typography>
                                                     </Box>
                                                     <Grid container spacing={2}>
-                                                        <Grid item xs={12} md={12} spacing={0}    >
+                                                        <Grid item xs={12} md={12}    >
 
                                                             <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
                                                                 <Typography
@@ -221,7 +216,7 @@ const Home = () => {
                                         </Formik>
 
                                         <Grid container spacing={2}>
-                                            <Grid item xs={12} md={12} spacing={0}>
+                                            <Grid item xs={12} md={12} >
                                                 <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
                                                     <Typography
                                                         color="textPrimary"
@@ -242,7 +237,7 @@ const Home = () => {
                                                     {dateOfBirth}
                                                 </Typography>
                                             </Grid>
-                                            <Grid item xs={12} md={12} spacing={0}>
+                                            <Grid item xs={12} md={12} >
                                                 <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
                                                     <Typography
                                                         color="textPrimary"

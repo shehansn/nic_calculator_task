@@ -27,12 +27,23 @@ router.post(`/convertNic`, async (req, res) => {
     function isNumeric(str) {
         return /^\d+$/.test(str);
     }
-
+    console.log(NICNo.substr(9))
+    console.log(NICNo.substr(9, 10))
+    console.log(NICNo.substr(9) != 'v')
+    console.log(NICNo.substr(9) != 'V')
+    console.log(NICNo.substr(9) !== 'v')
+    console.log(NICNo.substr(9) !== 'V')
     if (NICNo.length != 10 && NICNo.length != 12) {
-        var msg = 'Invalid NIC Number! NIC Length is too short'
+        var msg = 'Invalid NIC Number! Invalid NIC Length'
         return res.status(400).send({ message: msg })
     } else if (NICNo.length == 10 && !isNumeric(NICNo.substr(0, 9))) {
         var msg = 'Invalid NIC Number! NIC Should Numeric'
+        return res.status(400).send({ message: msg })
+    } else if (NICNo.length == 10 && isNumeric(NICNo.substr(9, 10))) {
+        var msg = 'Invalid NIC Number! Incorrect Format'
+        return res.status(400).send({ message: msg })
+    } else if (NICNo.length == 10 && ((NICNo.substr(9) !== 'v') && (NICNo.substr(9) !== 'V'))) {
+        var msg = 'Invalid NIC Number! Incorrect Format Endup With `v` or `V` characters'
         return res.status(400).send({ message: msg })
     }
     else {
@@ -40,9 +51,15 @@ router.post(`/convertNic`, async (req, res) => {
         if (NICNo.length == 10) {
             year = "19" + NICNo.substr(0, 2);
             dayDigit = parseInt(NICNo.substr(2, 3));
-        } else {
+        } else if (NICNo.length == 12 && !isNumeric(NICNo)) {
+            var msg = 'Invalid NIC Number! NIC Should Numeric'
+            return res.status(400).send({ message: msg })
+        } else if (NICNo.length == 12) {
             year = NICNo.substr(0, 4);
             dayDigit = parseInt(NICNo.substr(4, 3));
+        } else {
+            var msg = 'Invalid NIC Number! NIC Length is too long'
+            return res.status(400).send({ message: msg })
         }
 
         //Calculate Gender
@@ -55,7 +72,8 @@ router.post(`/convertNic`, async (req, res) => {
 
         // Day Digit Validation
         if (dayDigit < 1 && dayDigit > 366) {
-            return res.status(400).send('Invalid NIC Number!')
+            var msg = 'Invalid NIC Number!'
+            return res.status(400).send({ message: msg })
         } else {
             //Month
             if (dayDigit > 335) {
@@ -109,14 +127,7 @@ router.post(`/convertNic`, async (req, res) => {
             var Dob = "";
             Dob = (year + "-" + month + "-" + day);
 
-            // Age
-            var today = new Date();
-            var birthday = new Date(Dob);
-            var YearsOld = Number(today.getTime() - birthday.getTime()) / (365 * 24 * 3600 * 1000);
-            var x = Math.trunc(YearsOld);
-            var age = x;
-
-            res.status(200).send({ Dob: Dob, age: age, gender: gender })
+            res.status(200).send({ Dob: Dob, gender: gender })
 
         }
 

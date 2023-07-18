@@ -25,12 +25,31 @@ JsonWebToken -Jwt
 
 # Frontend
 
-cd client folder & run `npm install`
-and run `npm start`
+```cd client
+npm install
+npm start
+```
 
 # Backend
 
-cd server folder & run `npm install`
-create .env file in server folder
-add CONNECTION_STRING - MongoDB Connection String, SECRET - secret key for token generate
-and run `npm start`
+```cd server
+npm install
+```
+
+add `.env file`
+
+```CONNECTION_STRING =
+SECRET=
+```
+
+```npm start````
+
+# Specifications
+
+Backend is protected from unautherized access and protected from access using invalid token
+
+Frontend route is protected. Without login cant access nic converter page
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/) Fell free to use, share and modify

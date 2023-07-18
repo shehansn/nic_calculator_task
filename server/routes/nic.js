@@ -5,13 +5,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { auth } = require('../auth/errorHandler');
 
-//router.use(auth);
-
-
-router.get(`/`, async (req, res) => {
-
-    res.send('initial nic toute');
-})
 
 router.post(`/convertNic`, async (req, res) => {
     console.log(req.body.nic)
@@ -23,16 +16,10 @@ router.post(`/convertNic`, async (req, res) => {
     var day = "";
     var gender = "";
 
-
     function isNumeric(str) {
         return /^\d+$/.test(str);
     }
-    console.log(NICNo.substr(9))
-    console.log(NICNo.substr(9, 10))
-    console.log(NICNo.substr(9) != 'v')
-    console.log(NICNo.substr(9) != 'V')
-    console.log(NICNo.substr(9) !== 'v')
-    console.log(NICNo.substr(9) !== 'V')
+
     if (NICNo.length != 10 && NICNo.length != 12) {
         var msg = 'Invalid NIC Number! Invalid NIC Length'
         return res.status(400).send({ message: msg })

@@ -17,7 +17,7 @@ app.use(morgan("tiny"));
 app.use(authJWT());
 app.use(errorHandler);
 
-
+//routes
 const usersRoutes = require("./routes/users");
 const nicRoutes = require("./routes/nic");
 

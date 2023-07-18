@@ -26,11 +26,11 @@ JsonWebToken -Jwt
 # Frontend
 
 cd client folder & run `npm install`
-`npm start`
+and run `npm start`
 
 # Backend
 
 cd server folder & run `npm install`
 create .env file in server folder
 add CONNECTION_STRING - MongoDB Connection String, SECRET - secret key for token generate
-`npm start`
+and run `npm start`

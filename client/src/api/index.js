@@ -3,7 +3,6 @@ import axios from "axios";
 const baseURL = "http://localhost:8000"
 
 
-
 //register user
 export const registerUser = async (data) => {
     try {
@@ -25,17 +24,6 @@ export const loginUser = async (data) => {
     }
 }
 
-//get all users
-export const getAllUsers = async () => {
-    try {
-        const res = await axios.get(`${baseURL}/api/users`);
-
-        return res.data;
-    }
-    catch (err) {
-        return err;
-    }
-}
 
 //calculate user DOB & Gender
 export const convertNIC = async (data) => {

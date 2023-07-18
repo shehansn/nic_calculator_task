@@ -1,6 +1,6 @@
-import { AlertTitle, Box, Button, Card, CardContent, Container, Grid, InputLabel, Snackbar, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, Container, Grid, InputLabel, TextField, Typography } from '@mui/material'
 import { Formik } from 'formik';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
@@ -9,30 +9,27 @@ import { loginUser } from '../api';
 const LoginForm = () => {
     const navigate = useNavigate()
 
-    const [userDetails, setUserDetails] = useState({
+    const [loginDetails, setloginDetails] = useState({
         email: "",
         password: ""
 
     });
 
     const SigninSchema = Yup.object().shape({
-        password: Yup.string().min(8, 'Password is Too Short!').max(20, 'Password is Too Long!').required('Password is Required'),
         email: Yup.string().email('Invalid email').required('Email is Required'),
+        password: Yup.string().min(8, 'Password is Too Short!').max(20, 'Password is Too Long!').required('Password is Required')
     });
 
     async function login(values) {
         try {
-            console.log(values);
             const res = await loginUser(values);
             if (res.code === 'ERR_BAD_REQUEST') {
-                console.log("response from login user", res.response.data);
                 alert(res.response.data);
                 return;
             } else {
                 alert(`Welcome ${res.user.name}`);
-                console.log("response from login user", res);
                 localStorage.setItem("User", JSON.stringify(res));
-                setUserDetails({
+                setloginDetails({
                     email: "",
                     password: ""
                 });
@@ -64,8 +61,8 @@ const LoginForm = () => {
                         <CardContent>
                             <Formik
                                 initialValues={{
-                                    username: userDetails.email,
-                                    password: userDetails.password
+                                    email: loginDetails.email,
+                                    password: loginDetails.password
                                 }}
 
                                 validationSchema={SigninSchema}
@@ -157,7 +154,7 @@ const LoginForm = () => {
                                                     Login
                                                 </Button>
                                             </Box>
-                                            <Box my={2} width="20%">
+                                            <Box my={2} width="30%">
                                                 <Link to={"/register"} >
                                                     <Button
                                                         color="secondary"
@@ -179,7 +176,6 @@ const LoginForm = () => {
                         </CardContent>
                     </Card >
                 </Container>
-
             </Box>
 
 

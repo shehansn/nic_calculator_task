@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Box, Card, CardContent, Container, Grid, InputLabel, TextField, Toolbar, Typography } from '@mui/material';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { convertNIC, getAllUsers } from '../api';
+import { convertNIC } from '../api';
 import axios from 'axios';
 
 
@@ -27,12 +27,12 @@ const Home = () => {
     const [userInfo, setUserInfo] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState('');
     const [gender, setGender] = useState('');
-    const [userDetails, setUserDetails] = useState({
+    const [nicDetails, setnicDetails] = useState({
         nic: "",
 
     });
 
-    const DetailsSchema = Yup.object().shape({
+    const NicDetailsSchema = Yup.object().shape({
         nic: Yup.string().min(10, 'NIC is Too Short!').max(12, 'NIC is Too Long!').required('NIC is Required'),
     });
 
@@ -43,7 +43,6 @@ const Home = () => {
                 (config) => {
                     if (userInfo.token) {
                         config.headers.authorization = `Bearer ${userInfo.token}`;
-                        console.log('token from userinfo home', userInfo.token)
                     }
                     return config;
                 },
@@ -53,22 +52,18 @@ const Home = () => {
             );
 
             //call convertNIC function in api file
-            console.log(values);
             const res = await convertNIC(values);
-            console.log("response from convert nic 1", res);
             if (res.code === 'ERR_BAD_REQUEST') {
-                console.log("response from convert nic", res.response.data.message);
                 setDateOfBirth('')
                 setGender('')
                 alert(res.response.data.message);
                 return;
             }
             else {
-                alert(`converted DOB: ${res.Dob} Gender: ${res.gender}`);
+                setnicDetails({ nic: "" });
                 setDateOfBirth(res.Dob)
                 setGender(res.gender)
-                console.log("response from convert nic", res);
-                setUserDetails({ nic: "" });
+                alert(`converted DOB: ${res.Dob} Gender: ${res.gender}`);
             }
 
         } catch (error) {
@@ -87,185 +82,185 @@ const Home = () => {
     } else {
         return (
             <div>
-                <React.Fragment>
-                    <Toolbar sx={{ borderBottom: 1, borderColor: 'divider', mb: 5 }}>
-                        <Button variant="none" size="small" >
-                            Welcome {userInfo?.user.name}
-                        </Button>
-                        <Typography
-                            component="h2"
-                            variant="h5"
-                            color="inherit"
-                            align="center"
-                            noWrap
-                            sx={{ flex: 1 }}
-                        >
-                            NIC Converter
-                        </Typography>
-                        {userInfo && (
-                            <Button variant="outlined" size="small" onClick={() => { logout() }}>
-                                LogOut
-                            </Button>
-                        )}
-                        {!userInfo && (
-                            <Link to={"/login"} >
-                                <Button variant="outlined" size="small">
-                                    Login
-                                </Button>
-                            </Link>
-                        )}
 
-                    </Toolbar>
-
-                    <Box
-
-                        alignItems="center"
-                        height="100%"
-                        justifyContent="center"
-
+                <Toolbar sx={{ borderBottom: 1, borderColor: 'divider', mb: 5 }}>
+                    <Button variant="none" size="small" >
+                        Welcome {userInfo?.user.name}
+                    </Button>
+                    <Typography
+                        component="h2"
+                        variant="h5"
+                        color="inherit"
+                        align="center"
+                        noWrap
+                        sx={{ flex: 1 }}
                     >
-                        <Container maxWidth="xs">
-                            <Grid
-                                container
-                                spacing={2}
-                                direction="column"
-                                alignItems="center"
+                        NIC Converter
+                    </Typography>
+                    {userInfo && (
+                        <Button variant="outlined" size="small" onClick={() => { logout() }}>
+                            LogOut
+                        </Button>
+                    )}
+                    {!userInfo && (
+                        <Link to={"/login"} >
+                            <Button variant="outlined" size="small">
+                                Login
+                            </Button>
+                        </Link>
+                    )}
 
-                                sx={{ minHeight: '100vh' }}
-                            >
+                </Toolbar>
 
-                                <Card sx={{ minWidth: 275, mt: 2 }}>
-                                    <CardContent>
+                <Box
 
-                                        <Formik
-                                            initialValues={{
-                                                nic: userDetails.nic,
-                                            }}
+                    alignItems="center"
+                    height="100%"
+                    justifyContent="center"
 
-                                            validationSchema={DetailsSchema}
-                                            onSubmit={(e) => convert(e)}
-                                        >
-                                            {({
-                                                errors,
-                                                handleBlur,
-                                                handleChange,
-                                                handleSubmit,
-                                                isSubmitting,
-                                                touched,
-                                                values
-                                            }) => (
-                                                <form onSubmit={handleSubmit}>
-                                                    <Box mb={3}>
-                                                        <Typography
-                                                            color="textPrimary"
-                                                            variant="h4"
-                                                            textAlign="center"
-                                                        >
-                                                            Enter Your Nic To Calculate Birthday & Gender
-                                                        </Typography>
-                                                    </Box>
-                                                    <Grid container spacing={2}>
-                                                        <Grid item xs={12} md={12}    >
+                >
+                    <Container maxWidth="xs">
+                        <Grid
+                            container
+                            spacing={2}
+                            direction="column"
+                            alignItems="center"
 
-                                                            <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
-                                                                <Typography
-                                                                    color="textPrimary"
-                                                                    variant="h5"
-                                                                >
-                                                                    NIC :
-                                                                </Typography>
+                            sx={{ minHeight: '100vh' }}
+                        >
 
-                                                            </InputLabel>
+                            <Card sx={{ minWidth: 275, mt: 2 }}>
+                                <CardContent>
 
-                                                            <TextField
-                                                                error={Boolean(touched.nic && errors.nic)}
-                                                                fullWidth
-                                                                helperText={touched.nic && errors.nic}
-                                                                name="nic"
-                                                                onBlur={handleBlur}
-                                                                onChange={handleChange}
-                                                                type="text"
-                                                                value={values.nic}
-                                                                variant="outlined"
-                                                            />
-                                                        </Grid>
+                                    <Formik
+                                        initialValues={{
+                                            nic: nicDetails.nic,
+                                        }}
 
-
-                                                    </Grid>
-                                                    <Grid display="flex"
-                                                        flexDirection="row"
-                                                        justifyContent="space-between"
+                                        validationSchema={NicDetailsSchema}
+                                        onSubmit={(e) => convert(e)}
+                                    >
+                                        {({
+                                            errors,
+                                            handleBlur,
+                                            handleChange,
+                                            handleSubmit,
+                                            isSubmitting,
+                                            touched,
+                                            values
+                                        }) => (
+                                            <form onSubmit={handleSubmit}>
+                                                <Box mb={3}>
+                                                    <Typography
+                                                        color="textPrimary"
+                                                        variant="h4"
+                                                        textAlign="center"
                                                     >
-                                                        <Box my={2} width="30%">
-                                                            <Button
-                                                                color="secondary"
-                                                                disabled={isSubmitting}
-                                                                fullWidth
-                                                                size="large"
-                                                                type="submit"
-                                                                variant="contained"
+                                                        Enter Your Nic To Calculate Birthday & Gender
+                                                    </Typography>
+                                                </Box>
+                                                <Grid container spacing={2}>
+                                                    <Grid item xs={12} md={12}    >
+
+                                                        <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
+                                                            <Typography
+                                                                color="textPrimary"
+                                                                variant="h5"
                                                             >
-                                                                Convert
-                                                            </Button>
-                                                        </Box>
+                                                                NIC :
+                                                            </Typography>
 
+                                                        </InputLabel>
+
+                                                        <TextField
+                                                            error={Boolean(touched.nic && errors.nic)}
+                                                            fullWidth
+                                                            helperText={touched.nic && errors.nic}
+                                                            name="nic"
+                                                            onBlur={handleBlur}
+                                                            onChange={handleChange}
+                                                            type="text"
+                                                            value={values.nic}
+                                                            variant="outlined"
+                                                        />
                                                     </Grid>
 
-                                                </form>
-                                            )}
-                                        </Formik>
 
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={12} md={12} >
-                                                <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
-                                                    <Typography
-                                                        color="textPrimary"
-                                                        variant="h5"
-                                                    >
-                                                        Date Of Birth :
-                                                    </Typography>
-
-                                                </InputLabel>
-
-                                                <Typography
-                                                    component="h2"
-                                                    variant="h5"
-                                                    color="inherit"
-                                                    noWrap
-                                                    sx={{ flex: 1 }}
+                                                </Grid>
+                                                <Grid display="flex"
+                                                    flexDirection="row"
+                                                    justifyContent="space-between"
                                                 >
-                                                    {dateOfBirth}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={12} md={12} >
-                                                <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
-                                                    <Typography
-                                                        color="textPrimary"
-                                                        variant="h5"
-                                                    >
-                                                        Gender :
-                                                    </Typography>
+                                                    <Box my={2} width="30%">
+                                                        <Button
+                                                            color="secondary"
+                                                            disabled={isSubmitting}
+                                                            fullWidth
+                                                            size="large"
+                                                            type="submit"
+                                                            variant="contained"
+                                                        >
+                                                            Convert
+                                                        </Button>
+                                                    </Box>
 
-                                                </InputLabel>
+                                                </Grid>
 
+                                            </form>
+                                        )}
+                                    </Formik>
+
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12} md={12} >
+                                            <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
                                                 <Typography
-                                                    component="h2"
+                                                    color="textPrimary"
                                                     variant="h5"
-                                                    color="inherit"
-                                                    noWrap
-                                                    sx={{ flex: 1 }}
                                                 >
-                                                    {gender}
+                                                    Date Of Birth :
                                                 </Typography>
-                                            </Grid>
+
+                                            </InputLabel>
+
+                                            <Typography
+                                                component="h2"
+                                                variant="h5"
+                                                color="inherit"
+                                                noWrap
+                                                sx={{ flex: 1 }}
+                                            >
+                                                {dateOfBirth}
+                                            </Typography>
                                         </Grid>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
+                                        <Grid item xs={12} md={12} >
+                                            <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
+                                                <Typography
+                                                    color="textPrimary"
+                                                    variant="h5"
+                                                >
+                                                    Gender :
+                                                </Typography>
 
-                        </Container>
-                    </Box>
-                </React.Fragment>
+                                            </InputLabel>
+
+                                            <Typography
+                                                component="h2"
+                                                variant="h5"
+                                                color="inherit"
+                                                noWrap
+                                                sx={{ flex: 1 }}
+                                            >
+                                                {gender}
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+
+                    </Container>
+                </Box>
+
 
             </div>
         )

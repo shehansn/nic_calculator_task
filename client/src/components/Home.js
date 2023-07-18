@@ -4,9 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Box, Card, CardContent, Container, Grid, InputLabel, TextField, Toolbar, Typography } from '@mui/material';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { getAllUsers } from '../api';
+import { convertNIC, getAllUsers } from '../api';
+import axios from 'axios';
+
 
 const Home = () => {
+
     const navigate = useNavigate()
 
     const fetchUser = () => {
@@ -22,10 +25,8 @@ const Home = () => {
     }, []);
 
     const [userInfo, setUserInfo] = useState('');
-
     const [dateOfBirth, setDateOfBirth] = useState('');
     const [gender, setGender] = useState('');
-
     const [userDetails, setUserDetails] = useState({
         nic: "",
 
@@ -36,13 +37,50 @@ const Home = () => {
     });
 
     async function convert(values) {
-        console.log(values)
-        //navigate('/');
+        try {
+            //send access token in axios header
+            axios.interceptors.request.use(
+                (config) => {
+                    if (userInfo.token) {
+                        config.headers.authorization = `Bearer ${userInfo.token}`;
+                        console.log('token from userinfo home', userInfo.token)
+                    }
+                    return config;
+                },
+                (error) => {
+                    return Promise.reject(error);
+                }
+            );
+
+            //call convertNIC function in api file
+            console.log(values);
+            const res = await convertNIC(values);
+            console.log("response from convert nic 1", res);
+            if (res.code === 'ERR_BAD_REQUEST') {
+                console.log("response from convert nic", res.response.data.message);
+                setDateOfBirth('')
+                setGender('')
+                alert(res.response.data.message);
+                return;
+            }
+            else {
+                alert(`converted DOB: ${res.Dob} Gender: ${res.gender}`);
+                setDateOfBirth(res.Dob)
+                setGender(res.gender)
+                console.log("response from convert nic", res);
+                setUserDetails({ nic: "" });
+            }
+
+        } catch (error) {
+            console.error("Error during login:", error);
+        }
+
     }
 
-    // getAllUsers().then((data) => {
-    //     console.log("users data from home", data)
-    // });
+    const logout = () => {
+        localStorage.clear();
+        navigate('/login');
+    }
 
     if (!userInfo) {
         navigate('/login');
@@ -51,7 +89,9 @@ const Home = () => {
             <div>
                 <React.Fragment>
                     <Toolbar sx={{ borderBottom: 1, borderColor: 'divider', mb: 5 }}>
-
+                        <Button variant="none" size="small" >
+                            Welcome {userInfo?.user.name}
+                        </Button>
                         <Typography
                             component="h2"
                             variant="h5"
@@ -60,13 +100,21 @@ const Home = () => {
                             noWrap
                             sx={{ flex: 1 }}
                         >
-                            NIC Calculator
+                            NIC Converter
                         </Typography>
-                        <Link to={"/login"} >
-                            <Button variant="outlined" size="small">
-                                Login
+                        {userInfo && (
+                            <Button variant="outlined" size="small" onClick={() => { logout() }}>
+                                LogOut
                             </Button>
-                        </Link>
+                        )}
+                        {!userInfo && (
+                            <Link to={"/login"} >
+                                <Button variant="outlined" size="small">
+                                    Login
+                                </Button>
+                            </Link>
+                        )}
+
                     </Toolbar>
 
                     <Box
@@ -117,7 +165,7 @@ const Home = () => {
                                                         </Typography>
                                                     </Box>
                                                     <Grid container spacing={2}>
-                                                        <Grid item xs={12} md={12} spacing={0}    >
+                                                        <Grid item xs={12} md={12}    >
 
                                                             <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
                                                                 <Typography
@@ -168,7 +216,7 @@ const Home = () => {
                                         </Formik>
 
                                         <Grid container spacing={2}>
-                                            <Grid item xs={12} md={12} spacing={0}>
+                                            <Grid item xs={12} md={12} >
                                                 <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
                                                     <Typography
                                                         color="textPrimary"
@@ -189,7 +237,7 @@ const Home = () => {
                                                     {dateOfBirth}
                                                 </Typography>
                                             </Grid>
-                                            <Grid item xs={12} md={12} spacing={0}>
+                                            <Grid item xs={12} md={12} >
                                                 <InputLabel shrink id="email" sx={{ fontSize: 25 }}>
                                                     <Typography
                                                         color="textPrimary"
